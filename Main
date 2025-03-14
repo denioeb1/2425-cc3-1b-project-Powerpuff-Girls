@@ -1,1 +1,260 @@
+import java.util.*;
 
+// RecipeApp class
+public class RecipeApp {
+    private String appName;
+    private List<User> users;
+    private List<Recipe> recipes;
+
+    public RecipeApp(String appName) {
+        this.appName = appName;
+        this.users = new ArrayList<>();
+        this.recipes = new ArrayList<>();
+    }
+
+    public void startApp() {
+        System.out.println("Welcome to " + appName + "!");
+    }
+
+    public void addUser(User user) {
+        users.add(user);
+        System.out.println("User added: " + user.getUsername());
+    }
+
+    public void showWelcomeScreen() {
+        System.out.println("Welcome to the Recipe App! Explore and share your favorite recipes.");
+    }
+
+    public void addRecipe(Recipe recipe) {
+        recipes.add(recipe);
+        System.out.println("Recipe added: " + recipe.getTitle());
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); 
+
+        RecipeApp app = new RecipeApp("Recipe App");
+        app.startApp();
+
+        // Get user details for creating a User
+        System.out.println("Enter your username: ");
+        String username = scanner.nextLine();
+
+        System.out.println("Enter your password: ");
+        String password = scanner.nextLine();
+
+        System.out.println("Enter your email: ");
+        String email = scanner.nextLine();
+
+        System.out.println("Enter your profile picture file name (e.g., profile.jpg): ");
+        String profilePicture = scanner.nextLine();
+
+        User user1 = new User(1, username, password, email, profilePicture);
+        app.addUser(user1);
+
+        // Adding a recipe
+        System.out.println("Enter the recipe title: ");
+        String title = scanner.nextLine();
+
+        System.out.println("Enter the recipe description: ");
+        String description = scanner.nextLine();
+
+        System.out.println("Enter the recipe category (e.g., Dessert): ");
+        String category = scanner.nextLine();
+
+        Recipe recipe = new Recipe(1, title, description, category, 1);
+        app.addRecipe(recipe);
+
+        // Adding ingredients
+        System.out.println("Enter ingredients (separate them with commas): ");
+        String ingredientsInput = scanner.nextLine();
+        String[] ingredientsArray = ingredientsInput.split(",");
+        for (String ingredient : ingredientsArray) {
+            recipe.addIngredient(ingredient.trim());
+        }
+
+        // Rating the recipe
+        System.out.println("Rate this recipe (1 to 5 stars): ");
+        int rating = scanner.nextInt();
+        scanner.nextLine();  // Consume the newline character left by nextInt()
+        Rating recipeRating = new Rating(1, 1, 1, rating);
+        recipeRating.giveRating();
+
+        // Commenting on the recipe
+        System.out.println("Enter a comment for this recipe: ");
+        String commentText = scanner.nextLine();
+        Comment comment = new Comment(1, 1, 1, commentText);
+        comment.addComment();
+
+        // Sending a notification
+        Notification notification = new Notification(1, 1, "New recipe added!");
+        notification.sendNotification();
+
+        // Show all the details
+        app.showWelcomeScreen();
+        recipe.viewRecipe();
+
+        // Close the scanner
+        scanner.close();
+    }
+}
+
+// User class
+class User {
+    private int userID;
+    private String username;
+    private String password;
+    private String email;
+    private String profilePicture;
+
+    public User(int userID, String username, String password, String email, String profilePicture) {
+        this.userID = userID;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.profilePicture = profilePicture;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void register() {
+        System.out.println("User registered successfully!");
+    }
+
+    public void login() {
+        System.out.println("User logged in.");
+    }
+
+    public void updateProfile(String newEmail, String newProfilePicture) {
+        this.email = newEmail;
+        this.profilePicture = newProfilePicture;
+        System.out.println("Profile updated.");
+    }
+
+    public void logout() {
+        System.out.println("User logged out.");
+    }
+}
+
+// Recipe class
+class Recipe {
+    private int recipeID;
+    private String title;
+    private String description;
+    private List<String> ingredients;
+    private String category;
+    private String imageURL;
+    private int authorID;
+
+    public Recipe(int recipeID, String title, String description, String category, int authorID) {
+        this.recipeID = recipeID;
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.authorID = authorID;
+        this.ingredients = new ArrayList<>();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void addIngredient(String ingredient) {
+        ingredients.add(ingredient);
+    }
+
+    public void viewRecipe() {
+        System.out.println("Recipe: " + title);
+        System.out.println("Description: " + description);
+        System.out.println("Category: " + category);
+        System.out.println("Ingredients: " + ingredients);
+    }
+
+    public void editRecipe(String newTitle, String newDescription) {
+        this.title = newTitle;
+        this.description = newDescription;
+        System.out.println("Recipe updated.");
+    }
+
+    public void deleteRecipe() {
+        System.out.println("Recipe deleted.");
+    }
+}
+
+// Comment class
+class Comment {
+    private int commentID;
+    private int userID;
+    private int recipeID;
+    private String text;
+    private Date timestamp;
+
+    public Comment(int commentID, int userID, int recipeID, String text) {
+        this.commentID = commentID;
+        this.userID = userID;
+        this.recipeID = recipeID;
+        this.text = text;
+        this.timestamp = new Date();
+    }
+
+    public void addComment() {
+        System.out.println("Comment added: " + text);
+    }
+
+    public void deleteComment() {
+        System.out.println("Comment deleted.");
+    }
+}
+
+// Rating class
+class Rating {
+    private int ratingID;
+    private int userID;
+    private int recipeID;
+    private int stars;
+
+    public Rating(int ratingID, int userID, int recipeID, int stars) {
+        this.ratingID = ratingID;
+        this.userID = userID;
+        this.recipeID = recipeID;
+        this.stars = stars;
+    }
+
+    public void giveRating() {
+        System.out.println("Recipe rated with " + stars + " stars.");
+    }
+
+    public void editRating(int newStars) {
+        this.stars = newStars;
+        System.out.println("Rating updated to " + stars + " stars.");
+    }
+
+    public void deleteRating() {
+        System.out.println("Rating deleted.");
+    }
+}
+
+// Notification class
+class Notification {
+    private int notificationID;
+    private int userID;
+    private String message;
+    private Date timestamp;
+
+    public Notification(int notificationID, int userID, String message) {
+        this.notificationID = notificationID;
+        this.userID = userID;
+        this.message = message;
+        this.timestamp = new Date();
+    }
+
+    public void sendNotification() {
+        System.out.println("Notification sent: " + message);
+    }
+
+    public void viewNotifications() {
+        System.out.println("Notification: " + message + " at " + timestamp);
+    }
+}
