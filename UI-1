@@ -1,0 +1,175 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class RecipeApp extends JFrame implements ActionListener {
+    CardLayout cardLayout;
+    JPanel cardPanel;
+
+    public RecipeApp() {
+        setTitle("Recipe App");
+        setSize(400, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
+
+        JPanel splashPanel = new JPanel(new BorderLayout());
+        JLabel photoLabel = new JLabel("[Logo Placeholder]", JLabel.CENTER);
+        splashPanel.add(photoLabel, BorderLayout.CENTER);
+
+        JLabel appName = new JLabel("Welcome to RecipeApp!", JLabel.CENTER);
+        appName.setFont(new Font("Arial", Font.BOLD, 24));
+        splashPanel.add(appName, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton signInButton = new JButton("Sign In");
+        JButton signUpButton = new JButton("Sign Up");
+        signInButton.addActionListener(this);
+        signUpButton.addActionListener(this);
+
+        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(signInButton);
+        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(signUpButton);
+        buttonPanel.add(Box.createVerticalStrut(20));
+
+        splashPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        JPanel signInPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        signInPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        JTextField usernameField = new JTextField(15);
+        signInPanel.add(usernameField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        signInPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        JPasswordField passwordField = new JPasswordField(15);
+        signInPanel.add(passwordField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+        JButton submitSignInButton = new JButton("Sign In");
+        submitSignInButton.addActionListener(e -> cardLayout.show(cardPanel, "home"));
+        signInPanel.add(submitSignInButton, gbc);
+
+        JLabel forgotPasswordLabel = new JLabel("Forgot Password?");
+        forgotPasswordLabel.setForeground(Color.BLUE);
+        gbc.gridy = 3;
+        signInPanel.add(forgotPasswordLabel, gbc);
+
+        forgotPasswordLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cardLayout.show(cardPanel, "forgotPassword");
+            }
+        });
+
+        JPanel forgotPasswordPanel = new JPanel(new FlowLayout());
+        forgotPasswordPanel.add(new JLabel("Enter your Email:"));
+        JTextField emailField = new JTextField(15);
+        forgotPasswordPanel.add(emailField);
+        JButton sendCodeButton = new JButton("Send Verification Code");
+        forgotPasswordPanel.add(sendCodeButton);
+
+        JPanel signUpPanel = new JPanel(new GridBagLayout());
+        gbc.gridy = 0; gbc.gridwidth = 1;
+        signUpPanel.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        JTextField signUpEmailField = new JTextField(15);
+        signUpPanel.add(signUpEmailField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        signUpPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        JTextField signUpUsernameField = new JTextField(15);
+        signUpPanel.add(signUpUsernameField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2;
+        signUpPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        JPasswordField signUpPasswordField = new JPasswordField(15);
+        signUpPanel.add(signUpPasswordField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
+        JButton submitSignUpButton = new JButton("Sign Up");
+        submitSignUpButton.addActionListener(e -> cardLayout.show(cardPanel, "home"));
+        signUpPanel.add(submitSignUpButton, gbc);
+
+        JPanel homePanel = new JPanel(new BorderLayout());
+
+        JPanel categoryPanel = new JPanel(new GridLayout(1, 5, 10, 10));
+        String[] categoryNames = {"Pastry Type", "Preparation", "Difficulty Level", "Popularity", "Occasion"};
+        for (String category : categoryNames) {
+            JButton categoryButton = new JButton(category);
+            categoryButton.addActionListener(e -> showCategoryRecipes(category));
+            categoryPanel.add(categoryButton);
+        }
+        homePanel.add(categoryPanel, BorderLayout.NORTH);
+
+        JPanel contentPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        for (int i = 1; i <= 8; i++) {
+            JPanel recipeBox = new JPanel();
+            recipeBox.setPreferredSize(new Dimension(150, 150));
+            recipeBox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            recipeBox.add(new JLabel("Recipe " + i));
+            contentPanel.add(recipeBox);
+        }
+        homePanel.add(contentPanel, BorderLayout.CENTER);
+
+        JPanel footerPanel = new JPanel(new FlowLayout());
+
+        JButton homeButton = new JButton("🏠 Home");
+        homeButton.addActionListener(e -> cardLayout.show(cardPanel, "home"));
+        footerPanel.add(homeButton);
+
+        JButton searchButton = new JButton("🔍 Search");
+        searchButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "Search clicked!"));
+        footerPanel.add(searchButton);
+
+        JButton favoritesButton = new JButton("❤️ Favorites");
+        favoritesButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "Favorites clicked!"));
+        footerPanel.add(favoritesButton);
+
+        JButton addRecipeButton = new JButton("➕ Add Recipe");
+        addRecipeButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "Add Recipe clicked!"));
+        footerPanel.add(addRecipeButton);
+
+        homePanel.add(footerPanel, BorderLayout.SOUTH);
+
+        cardPanel.add(splashPanel, "splash");
+        cardPanel.add(signInPanel, "signIn");
+        cardPanel.add(signUpPanel, "signUp");
+        cardPanel.add(forgotPasswordPanel, "forgotPassword");
+        cardPanel.add(homePanel, "home");
+
+        add(cardPanel);
+        cardLayout.show(cardPanel, "splash");
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+        if (command.equals("Sign In")) {
+            cardLayout.show(cardPanel, "signIn");
+        } else if (command.equals("Sign Up")) {
+            cardLayout.show(cardPanel, "signUp");
+        }
+    }
+
+    public void showCategoryRecipes(String category) {
+        JOptionPane.showMessageDialog(this, "Exploring recipes in " + category + " category.");
+    }
+
+    public static void main(String[] args) {
+        new RecipeApp();
+    }
+}
