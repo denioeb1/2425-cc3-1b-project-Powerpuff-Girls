@@ -3,11 +3,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class RecipeApp extends JFrame implements ActionListener {
+public class Recipe extends JFrame implements ActionListener {
     CardLayout cardLayout;
     JPanel cardPanel;
 
-    public RecipeApp() {
+    public Recipe() {
         setTitle("Recipe App");
         setSize(400, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
