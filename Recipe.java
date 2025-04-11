@@ -1,224 +1,117 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class RecipeUI extends JFrame implements ActionListener {
-    CardLayout cardLayout;
-    JPanel cardPanel;
-    ArrayList<String> favoriteRecipes = new ArrayList<>();
-    ArrayList<String> recipes = new ArrayList<>();
+public class RecipeApp extends JFrame {
+    private ArrayList<Recipe> recipes;
+    private JPanel recipePanel;
+    private int recipeCount = 1;  // Counter to automatically number recipes
 
-    // Constructor to initialize the app
-    public RecipeUI() {
-        setTitle("Recipe App");
-        setSize(400, 600);
+    // Inner class for recipe structure
+    static class Recipe {
+        private String name;
+        private String type;
+        private String preparation;
+        private String difficulty;
+        private String popularity;
+        private String occasion;
+
+        public Recipe(String name, String type, String preparation, String difficulty, String popularity, String occasion) {
+            this.name = name;
+            this.type = type;
+            this.preparation = preparation;
+            this.difficulty = difficulty;
+            this.popularity = popularity;
+            this.occasion = occasion;
+        }
+
+        public String getDetails() {
+            return "<html><b>" + name + "</b><br>" +
+                   "Type: " + type + "<br>" +
+                   "Preparation: " + preparation + "<br>" +
+                   "Difficulty: " + difficulty + "<br>" +
+                   "Popularity: " + popularity + "<br>" +
+                   "Occasion: " + occasion + "</html>";
+        }
+    }
+
+    // Constructor
+    public RecipeApp() {
+        recipes = new ArrayList<>();
+        recipePanel = new JPanel();
+        recipePanel.setLayout(new BoxLayout(recipePanel, BoxLayout.Y_AXIS));
+
+        JScrollPane scrollPane = new JScrollPane(recipePanel);
+        add(scrollPane, BorderLayout.CENTER);
+
+        setSize(500, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        cardLayout = new CardLayout();
-        cardPanel = new JPanel(cardLayout);
-
-        // Splash Screen
-        JPanel splashPanel = new JPanel(new BorderLayout());
-        JLabel photoLabel = new JLabel("[Logo Placeholder]", JLabel.CENTER);
-        splashPanel.add(photoLabel, BorderLayout.CENTER);
-        JLabel appName = new JLabel("Welcome to RecipeApp!", JLabel.CENTER);
-        appName.setFont(new Font("Arial", Font.BOLD, 24));
-        splashPanel.add(appName, BorderLayout.NORTH);
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JButton signInButton = new JButton("Sign In");
-        JButton signUpButton = new JButton("Sign Up");
-        signInButton.addActionListener(this);
-        signUpButton.addActionListener(this);
-
-        buttonPanel.add(Box.createVerticalStrut(20));
-        buttonPanel.add(signInButton);
-        buttonPanel.add(Box.createVerticalStrut(10));
-        buttonPanel.add(signUpButton);
-        buttonPanel.add(Box.createVerticalStrut(20));
-
-        splashPanel.add(buttonPanel, BorderLayout.SOUTH);
-
-        // Sign In Panel
-        JPanel signInPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-
-        gbc.gridx = 0; gbc.gridy = 0;
-        signInPanel.add(new JLabel("Username:"), gbc);
-        gbc.gridx = 1;
-        JTextField usernameField = new JTextField(15);
-        signInPanel.add(usernameField, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 1;
-        signInPanel.add(new JLabel("Password:"), gbc);
-        gbc.gridx = 1;
-        JPasswordField passwordField = new JPasswordField(15);
-        signInPanel.add(passwordField, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
-        JButton submitSignInButton = new JButton("Sign In");
-        submitSignInButton.addActionListener(e -> cardLayout.show(cardPanel, "home"));
-        signInPanel.add(submitSignInButton, gbc);
-
-        JLabel forgotPasswordLabel = new JLabel("Forgot Password?");
-        forgotPasswordLabel.setForeground(Color.BLUE);
-        gbc.gridy = 3;
-        signInPanel.add(forgotPasswordLabel, gbc);
-
-        forgotPasswordLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                cardLayout.show(cardPanel, "forgotPassword");
-            }
-        });
-
-        // Forgot Password Panel
-        JPanel forgotPasswordPanel = new JPanel(new FlowLayout());
-        forgotPasswordPanel.add(new JLabel("Enter your Email:"));
-        JTextField emailField = new JTextField(15);
-        forgotPasswordPanel.add(emailField);
-        JButton sendCodeButton = new JButton("Send Verification Code");
-        forgotPasswordPanel.add(sendCodeButton);
-
-        // Home Panel
-        JPanel homePanel = new JPanel(new BorderLayout());
-
-        JPanel categoryPanel = new JPanel(new GridLayout(1, 5, 10, 10));
-        String[] categoryNames = {"Pastry Type", "Preparation", "Difficulty Level", "Popularity", "Occasion"};
-        for (String category : categoryNames) {
-            JButton categoryButton = new JButton(category);
-            categoryButton.addActionListener(e -> showCategoryRecipes(category));
-            categoryPanel.add(categoryButton);
-        }
-        homePanel.add(categoryPanel, BorderLayout.NORTH);
-
-        JPanel contentPanel = new JPanel(new GridLayout(2, 2, 10, 10));
-        for (int i = 1; i <= 8; i++) {
-            JPanel recipeBox = new JPanel();
-            recipeBox.setPreferredSize(new Dimension(150, 150));
-            recipeBox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            recipeBox.add(new JLabel("Recipe " + i));
-            contentPanel.add(recipeBox);
-        }
-        homePanel.add(contentPanel, BorderLayout.CENTER);
-
-        JPanel footerPanel = new JPanel(new FlowLayout());
-
-        JButton homeButton = new JButton("🏠 Home");
-        homeButton.addActionListener(e -> cardLayout.show(cardPanel, "home"));
-        footerPanel.add(homeButton);
-
-        JButton searchButton = new JButton("🔍 Search");
-        searchButton.addActionListener(e -> showSearchDialog());
-        footerPanel.add(searchButton);
-
-        JButton favoritesButton = new JButton("❤️ Favorites");
-        favoritesButton.addActionListener(e -> showFavoritesDialog());
-        footerPanel.add(favoritesButton);
-
-        JButton addRecipeButton = new JButton("➕ Add Recipe");
-        addRecipeButton.addActionListener(e -> showAddRecipeDialog());
-        footerPanel.add(addRecipeButton);
-
-        homePanel.add(footerPanel, BorderLayout.SOUTH);
-
-        cardPanel.add(splashPanel, "splash");
-        cardPanel.add(signInPanel, "signIn");
-        cardPanel.add(forgotPasswordPanel, "forgotPassword");
-        cardPanel.add(homePanel, "home");
-
-        add(cardPanel);
-        cardLayout.show(cardPanel, "splash");
+        setTitle("Recipe App");
         setVisible(true);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        String command = e.getActionCommand();
-        if (command.equals("Sign In")) {
-            cardLayout.show(cardPanel, "signIn");
-        } else if (command.equals("Sign Up")) {
-            cardLayout.show(cardPanel, "signUp");
-        }
+    // Method to add recipe
+    public void addRecipe(String name, String type, String preparation, String difficulty, String popularity, String occasion) {
+        Recipe newRecipe = new Recipe(name, type, preparation, difficulty, popularity, occasion);
+        recipes.add(newRecipe);
+        updateRecipeDisplay();
     }
 
-    public void showCategoryRecipes(String category) {
-        String sampleOutput = "";
-        switch (category) {
-            case "Pastry Type":
-                sampleOutput = "Showing cakes, pies, cookies, etc.";
-                break;
-            case "Preparation":
-                sampleOutput = "Showing quick meals, no-bake, 30-minute recipes.";
-                break;
-            case "Difficulty Level":
-                sampleOutput = "Showing easy, intermediate, and expert level recipes.";
-                break;
-            case "Popularity":
-                sampleOutput = "Showing trending and most liked recipes.";
-                break;
-            case "Occasion":
-                sampleOutput = "Showing birthday, holiday, and seasonal recipes.";
-                break;
+    // Method to update the display with recipes
+    public void updateRecipeDisplay() {
+        recipePanel.removeAll();
+        for (int i = 0; i < recipes.size(); i++) {
+            Recipe recipe = recipes.get(i);
+            JLabel recipeLabel = new JLabel("Recipe " + (i + 1) + ": " + recipe.getDetails());
+            recipeLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            recipePanel.add(recipeLabel);
+        }
+        recipePanel.revalidate();
+        recipePanel.repaint();
+    }
+
+    // Method to handle the user input and add recipe
+    public void displayInputForm() {
+        String name = JOptionPane.showInputDialog("Enter Recipe Name:");
+
+        // Pastry Type Dropdown (JComboBox)
+        String[] pastryTypes = {"Cake", "Cookie", "Pie", "Pastry", "Brownie"};
+        JComboBox<String> pastryTypeComboBox = new JComboBox<>(pastryTypes);
+        int pastryTypeChoice = JOptionPane.showOptionDialog(this, pastryTypeComboBox, "Select Pastry Type", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+        String type = pastryTypes[pastryTypeChoice];
+
+        String preparation = getPreparationForType(type);
+        String difficulty = JOptionPane.showInputDialog("Enter Difficulty Level (Easy/Medium/Hard):");
+        String popularity = JOptionPane.showInputDialog("Enter Popularity (e.g. Popular, Niche, Trendy):");
+        String occasion = JOptionPane.showInputDialog("Enter Occasion (e.g. Birthday, Holiday):");
+
+        addRecipe(name, type, preparation, difficulty, popularity, occasion);
+    }
+
+    // Get cooking/preparation times based on the pastry type
+    private String getPreparationForType(String type) {
+        switch (type) {
+            case "Cake":
+                return "Bake at 350°F for 30-35 minutes.";
+            case "Cookie":
+                return "Bake at 375°F for 8-10 minutes.";
+            case "Pie":
+                return "Bake at 425°F for 40-45 minutes.";
+            case "Pastry":
+                return "Bake at 400°F for 20-25 minutes.";
+            case "Brownie":
+                return "Bake at 350°F for 25-30 minutes.";
             default:
-                sampleOutput = "Unknown category.";
+                return "Unknown preparation time.";
         }
-        JOptionPane.showMessageDialog(this, sampleOutput);
-    }
-
-    private void showSearchDialog() {
-        String searchQuery = JOptionPane.showInputDialog(this, "Enter recipe name or ingredient:");
-        if (searchQuery != null && !searchQuery.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Searching for: " + searchQuery);
-        } else {
-            JOptionPane.showMessageDialog(this, "Search query cannot be empty.");
-        }
-    }
-
-    private void showFavoritesDialog() {
-        if (favoriteRecipes.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You have no favorite recipes.");
-        } else {
-            JOptionPane.showMessageDialog(this, "Your favorite recipes: " + String.join(", ", favoriteRecipes));
-        }
-    }
-
-    private void showAddRecipeDialog() {
-        JPanel addRecipePanel = new JPanel(new GridLayout(4, 2));
-
-        JTextField recipeNameField = new JTextField();
-        JTextArea recipeDescriptionField = new JTextArea();
-        recipeDescriptionField.setRows(5);
-        recipeDescriptionField.setLineWrap(true);
-
-        addRecipePanel.add(new JLabel("Recipe Name:"));
-        addRecipePanel.add(recipeNameField);
-        addRecipePanel.add(new JLabel("Description:"));
-        addRecipePanel.add(new JScrollPane(recipeDescriptionField));
-
-        JButton submitRecipeButton = new JButton("Add Recipe");
-        submitRecipeButton.addActionListener(e -> {
-            String recipeName = recipeNameField.getText();
-            String description = recipeDescriptionField.getText();
-            if (!recipeName.isEmpty() && !description.isEmpty()) {
-                recipes.add(recipeName + ": " + description);
-                JOptionPane.showMessageDialog(this, "Recipe added!");
-            } else {
-                JOptionPane.showMessageDialog(this, "Please fill in all fields.");
-            }
-        });
-
-        addRecipePanel.add(submitRecipeButton);
-
-        JOptionPane.showOptionDialog(this, addRecipePanel, "Add Recipe", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, new Object[]{}, null);
     }
 
     public static void main(String[] args) {
-        new RecipeUI();
+        RecipeApp app = new RecipeApp();
+
+        // Simulating adding a recipe
+        app.displayInputForm(); // Opens dialog for the user to input a recipe
+
+        // Optionally, allow users to add more recipes or interact with the app here.
     }
 }
