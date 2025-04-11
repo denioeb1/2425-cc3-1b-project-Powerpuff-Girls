@@ -9,7 +9,19 @@ public class Recipe extends JFrame implements ActionListener {
     JPanel cardPanel;
     ArrayList<String> favoriteRecipes = new ArrayList<>();
     ArrayList<String> recipes = new ArrayList<>();
+    ArrayList<User> users = new ArrayList<>();
     int recipeCount = 1; // To keep track of the recipe number
+    
+    // Temporary hardcoded users for testing
+    class User {
+        String username;
+        String password;
+        
+        User(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+    }
     
     // Constructor to initialize the app
     public Recipe() {
@@ -47,6 +59,76 @@ public class Recipe extends JFrame implements ActionListener {
 
         splashPanel.add(buttonPanel, BorderLayout.SOUTH);
 
+        // Sign In Panel
+        JPanel signInPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        signInPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        JTextField usernameField = new JTextField(15);
+        signInPanel.add(usernameField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        signInPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        JPasswordField passwordField = new JPasswordField(15);
+        signInPanel.add(passwordField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+        JButton submitSignInButton = new JButton("Sign In");
+        submitSignInButton.addActionListener(e -> {
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
+            boolean signedIn = false;
+
+            // Check if the user credentials are correct
+            for (User user : users) {
+                if (user.username.equals(username) && user.password.equals(password)) {
+                    signedIn = true;
+                    break;
+                }
+            }
+
+            if (signedIn) {
+                cardLayout.show(cardPanel, "home");
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid username or password.");
+            }
+        });
+        signInPanel.add(submitSignInButton, gbc);
+
+        // Sign Up Panel
+        JPanel signUpPanel = new JPanel(new GridBagLayout());
+        gbc.gridx = 0; gbc.gridy = 0;
+        signUpPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        JTextField newUsernameField = new JTextField(15);
+        signUpPanel.add(newUsernameField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        signUpPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        JPasswordField newPasswordField = new JPasswordField(15);
+        signUpPanel.add(newPasswordField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+        JButton submitSignUpButton = new JButton("Sign Up");
+        submitSignUpButton.addActionListener(e -> {
+            String username = newUsernameField.getText();
+            String password = new String(newPasswordField.getPassword());
+
+            if (!username.isEmpty() && !password.isEmpty()) {
+                users.add(new User(username, password));
+                JOptionPane.showMessageDialog(this, "Sign Up successful! You can now Sign In.");
+                cardLayout.show(cardPanel, "splash"); // Show splash screen after signup
+            } else {
+                JOptionPane.showMessageDialog(this, "Please fill in all fields.");
+            }
+        });
+        signUpPanel.add(submitSignUpButton, gbc);
+
         // Home Panel
         JPanel homePanel = new JPanel(new BorderLayout());
 
@@ -78,16 +160,6 @@ public class Recipe extends JFrame implements ActionListener {
         homeButton.addActionListener(e -> cardLayout.show(cardPanel, "home"));
         footerPanel.add(homeButton);
 
-        // Search button functionality
-        JButton searchButton = new JButton("🔍 Search");
-        searchButton.addActionListener(e -> showSearchDialog());
-        footerPanel.add(searchButton);
-
-        // Favorites button functionality
-        JButton favoritesButton = new JButton("❤️ Favorites");
-        favoritesButton.addActionListener(e -> showFavoritesDialog());
-        footerPanel.add(favoritesButton);
-
         // Add Recipe button functionality
         JButton addRecipeButton = new JButton("➕ Add Recipe");
         addRecipeButton.addActionListener(e -> showAddRecipeDialog());
@@ -97,6 +169,8 @@ public class Recipe extends JFrame implements ActionListener {
 
         // Add Panels to Card Layout
         cardPanel.add(splashPanel, "splash");
+        cardPanel.add(signInPanel, "signIn");
+        cardPanel.add(signUpPanel, "signUp");
         cardPanel.add(homePanel, "home");
 
         // Final setup
@@ -118,25 +192,6 @@ public class Recipe extends JFrame implements ActionListener {
     // Show recipes in the selected category
     public void showCategoryRecipes(String category) {
         JOptionPane.showMessageDialog(this, "Exploring recipes in " + category + " category.");
-    }
-
-    // Search Dialog
-    private void showSearchDialog() {
-        String searchQuery = JOptionPane.showInputDialog(this, "Enter recipe name or ingredient:");
-        if (searchQuery != null && !searchQuery.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Searching for: " + searchQuery);
-        } else {
-            JOptionPane.showMessageDialog(this, "Search query cannot be empty.");
-        }
-    }
-
-    // Show Favorites Dialog
-    private void showFavoritesDialog() {
-        if (favoriteRecipes.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You have no favorite recipes.");
-        } else {
-            JOptionPane.showMessageDialog(this, "Your favorite recipes: " + String.join(", ", favoriteRecipes));
-        }
     }
 
     // Add Recipe Dialog
