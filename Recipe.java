@@ -158,13 +158,16 @@ public class Recipe extends JFrame implements ActionListener {
     }
 
     private void showAddRecipeDialog() {
-        JPanel addRecipePanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        JPanel addRecipePanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JTextField recipeNameField = new JTextField();
-        JTextArea recipeDescriptionField = new JTextArea(3, 20);
+        JTextField recipeNameField = new JTextField(20);
+        JTextArea recipeDescriptionField = new JTextArea(5, 20);
         String[] pastryTypes = {"Croissant", "Danish", "Puff", "Strudel", "Pie", "Tart"};
         JComboBox<String> pastryTypeBox = new JComboBox<>(pastryTypes);
-        JTextField prepTimeField = new JTextField();
+        JTextField prepTimeField = new JTextField(20);
         String[] difficultyLevels = {"Easy", "Medium", "Hard"};
         JComboBox<String> difficultyBox = new JComboBox<>(difficultyLevels);
         String[] popularityLevels = {"Low", "Medium", "High"};
@@ -172,20 +175,27 @@ public class Recipe extends JFrame implements ActionListener {
         String[] occasionTypes = {"Breakfast", "Snack", "Dessert", "Party"};
         JComboBox<String> occasionBox = new JComboBox<>(occasionTypes);
 
-        addRecipePanel.add(new JLabel("Recipe Name:"));
-        addRecipePanel.add(recipeNameField);
-        addRecipePanel.add(new JLabel("Description:"));
-        addRecipePanel.add(new JScrollPane(recipeDescriptionField));
-        addRecipePanel.add(new JLabel("Pastry Type:"));
-        addRecipePanel.add(pastryTypeBox);
-        addRecipePanel.add(new JLabel("Preparation Time (mins):"));
-        addRecipePanel.add(prepTimeField);
-        addRecipePanel.add(new JLabel("Difficulty Level:"));
-        addRecipePanel.add(difficultyBox);
-        addRecipePanel.add(new JLabel("Popularity Level:"));
-        addRecipePanel.add(popularityBox);
-        addRecipePanel.add(new JLabel("Occasion:"));
-        addRecipePanel.add(occasionBox);
+        int y = 0;
+        gbc.gridx = 0; gbc.gridy = y; addRecipePanel.add(new JLabel("Recipe Name:"), gbc);
+        gbc.gridx = 1; addRecipePanel.add(recipeNameField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = ++y; addRecipePanel.add(new JLabel("Description:"), gbc);
+        gbc.gridx = 1; addRecipePanel.add(new JScrollPane(recipeDescriptionField), gbc);
+
+        gbc.gridx = 0; gbc.gridy = ++y; addRecipePanel.add(new JLabel("Pastry Type:"), gbc);
+        gbc.gridx = 1; addRecipePanel.add(pastryTypeBox, gbc);
+
+        gbc.gridx = 0; gbc.gridy = ++y; addRecipePanel.add(new JLabel("Preparation Time (mins):"), gbc);
+        gbc.gridx = 1; addRecipePanel.add(prepTimeField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = ++y; addRecipePanel.add(new JLabel("Difficulty Level:"), gbc);
+        gbc.gridx = 1; addRecipePanel.add(difficultyBox, gbc);
+
+        gbc.gridx = 0; gbc.gridy = ++y; addRecipePanel.add(new JLabel("Popularity Level:"), gbc);
+        gbc.gridx = 1; addRecipePanel.add(popularityBox, gbc);
+
+        gbc.gridx = 0; gbc.gridy = ++y; addRecipePanel.add(new JLabel("Occasion:"), gbc);
+        gbc.gridx = 1; addRecipePanel.add(occasionBox, gbc);
 
         int result = JOptionPane.showConfirmDialog(this, addRecipePanel, "Add Recipe", JOptionPane.OK_CANCEL_OPTION);
 
