@@ -2,12 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
-public class Recipe extends JFrame implements ActionListener {
+public class RecipeUI extends JFrame implements ActionListener {
     CardLayout cardLayout;
     JPanel cardPanel;
+    ArrayList<String> favoriteRecipes = new ArrayList<>();
+    ArrayList<String> recipes = new ArrayList<>();
 
-    public Recipe() {
+    // Constructor to initialize the app
+    public RecipeUI() {
         setTitle("Recipe App");
         setSize(400, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -15,10 +19,10 @@ public class Recipe extends JFrame implements ActionListener {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
+        // Splash Screen
         JPanel splashPanel = new JPanel(new BorderLayout());
         JLabel photoLabel = new JLabel("[Logo Placeholder]", JLabel.CENTER);
         splashPanel.add(photoLabel, BorderLayout.CENTER);
-
         JLabel appName = new JLabel("Welcome to RecipeApp!", JLabel.CENTER);
         appName.setFont(new Font("Arial", Font.BOLD, 24));
         splashPanel.add(appName, BorderLayout.NORTH);
@@ -40,6 +44,7 @@ public class Recipe extends JFrame implements ActionListener {
 
         splashPanel.add(buttonPanel, BorderLayout.SOUTH);
 
+        // Sign In Panel
         JPanel signInPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -72,6 +77,7 @@ public class Recipe extends JFrame implements ActionListener {
             }
         });
 
+        // Forgot Password Panel
         JPanel forgotPasswordPanel = new JPanel(new FlowLayout());
         forgotPasswordPanel.add(new JLabel("Enter your Email:"));
         JTextField emailField = new JTextField(15);
@@ -79,30 +85,7 @@ public class Recipe extends JFrame implements ActionListener {
         JButton sendCodeButton = new JButton("Send Verification Code");
         forgotPasswordPanel.add(sendCodeButton);
 
-        JPanel signUpPanel = new JPanel(new GridBagLayout());
-        gbc.gridy = 0; gbc.gridwidth = 1;
-        signUpPanel.add(new JLabel("Email:"), gbc);
-        gbc.gridx = 1;
-        JTextField signUpEmailField = new JTextField(15);
-        signUpPanel.add(signUpEmailField, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 1;
-        signUpPanel.add(new JLabel("Username:"), gbc);
-        gbc.gridx = 1;
-        JTextField signUpUsernameField = new JTextField(15);
-        signUpPanel.add(signUpUsernameField, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 2;
-        signUpPanel.add(new JLabel("Password:"), gbc);
-        gbc.gridx = 1;
-        JPasswordField signUpPasswordField = new JPasswordField(15);
-        signUpPanel.add(signUpPasswordField, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
-        JButton submitSignUpButton = new JButton("Sign Up");
-        submitSignUpButton.addActionListener(e -> cardLayout.show(cardPanel, "home"));
-        signUpPanel.add(submitSignUpButton, gbc);
-
+        // Home Panel
         JPanel homePanel = new JPanel(new BorderLayout());
 
         JPanel categoryPanel = new JPanel(new GridLayout(1, 5, 10, 10));
@@ -131,22 +114,21 @@ public class Recipe extends JFrame implements ActionListener {
         footerPanel.add(homeButton);
 
         JButton searchButton = new JButton("🔍 Search");
-        searchButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "Search clicked!"));
+        searchButton.addActionListener(e -> showSearchDialog());
         footerPanel.add(searchButton);
 
         JButton favoritesButton = new JButton("❤️ Favorites");
-        favoritesButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "Favorites clicked!"));
+        favoritesButton.addActionListener(e -> showFavoritesDialog());
         footerPanel.add(favoritesButton);
 
         JButton addRecipeButton = new JButton("➕ Add Recipe");
-        addRecipeButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "Add Recipe clicked!"));
+        addRecipeButton.addActionListener(e -> showAddRecipeDialog());
         footerPanel.add(addRecipeButton);
 
         homePanel.add(footerPanel, BorderLayout.SOUTH);
 
         cardPanel.add(splashPanel, "splash");
         cardPanel.add(signInPanel, "signIn");
-        cardPanel.add(signUpPanel, "signUp");
         cardPanel.add(forgotPasswordPanel, "forgotPassword");
         cardPanel.add(homePanel, "home");
 
@@ -166,11 +148,77 @@ public class Recipe extends JFrame implements ActionListener {
     }
 
     public void showCategoryRecipes(String category) {
-        JOptionPane.showMessageDialog(this, "Exploring recipes in " + category + " category.");
+        String sampleOutput = "";
+        switch (category) {
+            case "Pastry Type":
+                sampleOutput = "Showing cakes, pies, cookies, etc.";
+                break;
+            case "Preparation":
+                sampleOutput = "Showing quick meals, no-bake, 30-minute recipes.";
+                break;
+            case "Difficulty Level":
+                sampleOutput = "Showing easy, intermediate, and expert level recipes.";
+                break;
+            case "Popularity":
+                sampleOutput = "Showing trending and most liked recipes.";
+                break;
+            case "Occasion":
+                sampleOutput = "Showing birthday, holiday, and seasonal recipes.";
+                break;
+            default:
+                sampleOutput = "Unknown category.";
+        }
+        JOptionPane.showMessageDialog(this, sampleOutput);
     }
 
-    // Add the main method here
+    private void showSearchDialog() {
+        String searchQuery = JOptionPane.showInputDialog(this, "Enter recipe name or ingredient:");
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Searching for: " + searchQuery);
+        } else {
+            JOptionPane.showMessageDialog(this, "Search query cannot be empty.");
+        }
+    }
+
+    private void showFavoritesDialog() {
+        if (favoriteRecipes.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "You have no favorite recipes.");
+        } else {
+            JOptionPane.showMessageDialog(this, "Your favorite recipes: " + String.join(", ", favoriteRecipes));
+        }
+    }
+
+    private void showAddRecipeDialog() {
+        JPanel addRecipePanel = new JPanel(new GridLayout(4, 2));
+
+        JTextField recipeNameField = new JTextField();
+        JTextArea recipeDescriptionField = new JTextArea();
+        recipeDescriptionField.setRows(5);
+        recipeDescriptionField.setLineWrap(true);
+
+        addRecipePanel.add(new JLabel("Recipe Name:"));
+        addRecipePanel.add(recipeNameField);
+        addRecipePanel.add(new JLabel("Description:"));
+        addRecipePanel.add(new JScrollPane(recipeDescriptionField));
+
+        JButton submitRecipeButton = new JButton("Add Recipe");
+        submitRecipeButton.addActionListener(e -> {
+            String recipeName = recipeNameField.getText();
+            String description = recipeDescriptionField.getText();
+            if (!recipeName.isEmpty() && !description.isEmpty()) {
+                recipes.add(recipeName + ": " + description);
+                JOptionPane.showMessageDialog(this, "Recipe added!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Please fill in all fields.");
+            }
+        });
+
+        addRecipePanel.add(submitRecipeButton);
+
+        JOptionPane.showOptionDialog(this, addRecipePanel, "Add Recipe", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, new Object[]{}, null);
+    }
+
     public static void main(String[] args) {
-        new Recipe();
+        new RecipeUI();
     }
 }
