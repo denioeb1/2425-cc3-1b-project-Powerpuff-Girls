@@ -11,18 +11,18 @@ public class Recipe extends JFrame implements ActionListener {
     ArrayList<String> recipes = new ArrayList<>();
     ArrayList<User> users = new ArrayList<>();
     int recipeCount = 1; // To keep track of the recipe number
-    
+
     // Temporary hardcoded users for testing
     class User {
         String username;
         String password;
-        
+
         User(String username, String password) {
             this.username = username;
             this.password = password;
         }
     }
-    
+
     // Constructor to initialize the app
     public Recipe() {
         setTitle("Recipe App");
@@ -251,21 +251,4 @@ public class Recipe extends JFrame implements ActionListener {
 
             if (!recipeName.isEmpty() && !description.isEmpty()) {
                 String recipe = "Recipe " + recipeCount++ + ": " + recipeName + " - " + description + "\n"
-                        + "Pastry Type: " + pastryType + ", Preparation: " + preparation + ", Difficulty: " + difficulty
-                        + ", Popularity: " + popularity + ", Occasion: " + occasion;
-                recipes.add(recipe);
-                JOptionPane.showMessageDialog(this, "Recipe added!\n" + recipe);
-            } else {
-                JOptionPane.showMessageDialog(this, "Please fill in all fields.");
-            }
-        });
-
-        addRecipePanel.add(submitRecipeButton);
-
-        JOptionPane.showOptionDialog(this, addRecipePanel, "Add Recipe", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, new Object[]{}, null);
-    }
-
-    public static void main(String[] args) {
-        new Recipe();
-    }
-}
+                        + "Pastry
