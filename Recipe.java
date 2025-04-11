@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class RecipeApp extends JFrame implements ActionListener {
+public class Recipe extends JFrame implements ActionListener {
     CardLayout cardLayout;
     JPanel cardPanel;
     ArrayList<String> favoriteRecipes = new ArrayList<>();
@@ -12,7 +12,7 @@ public class RecipeApp extends JFrame implements ActionListener {
     int recipeCount = 1; // To keep track of the recipe number
     
     // Constructor to initialize the app
-    public RecipeApp() {
+    public Recipe() {
         setTitle("Recipe App");
         setSize(500, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -211,6 +211,6 @@ public class RecipeApp extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new RecipeApp();
+        new Recipe();
     }
 }
