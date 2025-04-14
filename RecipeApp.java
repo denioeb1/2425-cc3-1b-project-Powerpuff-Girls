@@ -4,14 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class Recipe extends JFrame implements ActionListener {
+public class RecipeApp extends JFrame implements ActionListener {
     CardLayout cardLayout;
     JPanel cardPanel;
     ArrayList<String> favoriteRecipes = new ArrayList<>();
     ArrayList<String> recipes = new ArrayList<>();
     JPanel contentPanel;
 
-    public Recipe() {
+    public RecipeApp() {
         setTitle("Recipe App");
         setSize(600, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -241,6 +241,6 @@ public class Recipe extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new Recipe();
+        new RecipeApp();
     }
 }
